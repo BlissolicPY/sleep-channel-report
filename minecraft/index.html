@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Minecraft Sleep Videos — Performance Report</title>
+<style>
+  @page { size: A4 portrait; margin: 13mm 12mm 15mm; }
+  :root{
+    --ink:#11131a; --ink2:#333a4d; --mut:#646c80; --line:#dfe3ec;
+    --gr:#1f7a4d; --gr2:#2e9e63; --grl:#eef8f2; --grl2:#dcf0e6;
+    --pur:#6D28D9; --purl:#f4f0fe;
+    --good:#12805c; --goodbg:#e6f6f0; --warn:#b45309; --warnbg:#fef4e6;
+    --bad:#be123c; --badbg:#fdeaef; --paper:#fff; --shell:#f5f7f6;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--shell);color:var(--ink);
+    font:15px/1.62 "Inter","Segoe UI",-apple-system,system-ui,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+  .page{max-width:930px;margin:0 auto;background:var(--paper);padding:0 62px 70px}
+  h1,h2,h3,h4{line-height:1.2;margin:0;letter-spacing:-.022em;font-weight:700}
+  p{margin:0 0 13px}
+  small{font-size:12.5px}
+
+  .cover{background:linear-gradient(155deg,#0e2a1c 0%,#17563a 45%,#2e9e63 100%);
+    color:#fff;margin:0 -62px 44px;padding:64px 62px 54px}
+  .kicker{font-size:11.5px;letter-spacing:.19em;text-transform:uppercase;
+    color:#a9e5c6;font-weight:650;margin-bottom:20px}
+  .cover h1{font-size:45px;letter-spacing:-.033em;margin-bottom:15px}
+  .cover .sub{font-size:17px;color:#d5f0e2;max-width:660px;line-height:1.5;margin-bottom:30px}
+  .cmeta{display:flex;gap:32px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.24);padding-top:19px}
+  .cmeta div{font-size:12.5px;color:#a9e5c6}
+  .cmeta b{display:block;color:#fff;font-size:18px;font-weight:700;margin-top:3px;letter-spacing:-.02em}
+
+  .verdict{border:2px solid var(--gr2);border-radius:14px;padding:25px 27px;margin:0 0 34px;background:var(--grl)}
+  .verdict h2{font-size:21px;color:var(--gr);margin-bottom:12px}
+  .verdict p{margin-bottom:10px;font-size:15.4px}
+  .verdict p:last-child{margin-bottom:0}
+
+  h2.sec{font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:var(--gr2);
+    margin:0 0 6px;font-weight:700}
+  .secwrap{margin:44px 0 0;padding-top:25px;border-top:2px solid var(--line)}
+  h3.big{font-size:28px;letter-spacing:-.028em;margin:0 0 15px}
+  h4{font-size:17px;margin:25px 0 9px}
+  .lead{font-size:16.4px;color:var(--ink2);margin-bottom:19px;line-height:1.58}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:19px 0 25px}
+  .stat{background:var(--shell);border:1px solid var(--line);border-radius:11px;padding:15px 16px}
+  .stat b{display:block;font-size:25px;letter-spacing:-.03em;color:var(--gr);line-height:1.12}
+  .stat span{display:block;font-size:11.5px;color:var(--mut);margin-top:5px;line-height:1.36}
+  .stats.three{grid-template-columns:repeat(3,1fr)}
+
+  table{width:100%;border-collapse:collapse;margin:15px 0 19px;font-size:13px}
+  th{text-align:left;background:var(--grl2);color:#12492f;font-weight:650;padding:9px 10px;
+    border-bottom:2px solid #b9e2cc;font-size:11.3px;letter-spacing:.045em;text-transform:uppercase}
+  td{padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:nth-child(even) td{background:#fafcfb}
+  td.n,th.n{text-align:right}
+  .hi td{background:#e9f7ef !important;font-weight:600}
+  .win{color:var(--good);font-weight:700}
+  .lose{color:var(--bad);font-weight:700}
+  caption{caption-side:bottom;text-align:left;font-size:11.7px;color:var(--mut);padding-top:7px;font-style:italic}
+
+  .call{border-left:4px solid var(--gr2);background:var(--grl);padding:15px 18px;
+    border-radius:0 9px 9px 0;margin:17px 0;font-size:14.5px}
+  .call.g{border-color:var(--good);background:var(--goodbg)}
+  .call.w{border-color:var(--warn);background:var(--warnbg)}
+  .call.r{border-color:var(--bad);background:var(--badbg)}
+  .call.p{border-color:var(--pur);background:var(--purl)}
+  .call > b:first-child{display:block;margin-bottom:5px;font-size:12.8px;
+    letter-spacing:.06em;text-transform:uppercase}
+  .call.g > b:first-child{color:var(--good)}
+  .call.w > b:first-child{color:var(--warn)}
+  .call.r > b:first-child{color:var(--bad)}
+  .call.p > b:first-child{color:var(--pur)}
+  .call b{font-weight:700}
+
+  ul,ol{margin:10px 0 15px;padding-left:20px}
+  li{margin-bottom:6px}
+  li::marker{color:var(--gr2)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:19px;margin:17px 0}
+  .card{border:1px solid var(--line);border-radius:12px;padding:17px 19px;background:#fff}
+  .card h4{margin-top:0;font-size:15.6px}
+  .card.acc{background:var(--grl);border-color:#b9e2cc}
+
+  .tag{display:inline-block;padding:2.5px 9px;border-radius:20px;font-size:10.7px;
+    font-weight:700;letter-spacing:.05em;text-transform:uppercase;vertical-align:2px}
+  .tag.g{background:var(--goodbg);color:var(--good)}
+  .tag.w{background:var(--warnbg);color:var(--warn)}
+  .tag.r{background:var(--badbg);color:var(--bad)}
+  .tag.p{background:var(--grl2);color:var(--gr)}
+
+  .tt{font-family:"Consolas","SF Mono",ui-monospace,monospace;font-size:12.6px;
+    background:#f0f3f1;padding:1.5px 6px;border-radius:5px}
+  .foot{margin-top:50px;padding-top:21px;border-top:2px solid var(--line);font-size:12.1px;color:var(--mut)}
+
+  @media print{
+    body{background:#fff;font-size:10.6pt;line-height:1.55}
+    .page{max-width:none;padding:0}
+    .cover{margin:0 0 26px;padding:34px 32px 28px;border-radius:12px}
+    .cover h1{font-size:35px} .cover .sub{font-size:13.6px}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    h3.big{font-size:21px} h4{font-size:14.3px} .lead{font-size:13.2px}
+    table{font-size:9.2pt} td,th{padding:4.5px 6px}
+    .stat b{font-size:19px} .stats{gap:9px}
+    .secwrap{margin-top:28px;padding-top:17px}
+    tr{break-inside:avoid;page-break-inside:avoid}
+    .call,.card,.stat,.verdict{break-inside:avoid;page-break-inside:avoid}
+    h3.big,h4{break-after:avoid;page-break-after:avoid}
+    .pb{break-before:page;page-break-before:always}
+  }
+  @media (max-width:760px){
+    .page{padding:0 22px 46px}.cover{margin:0 -22px 30px;padding:44px 22px 36px}
+    .cover h1{font-size:32px}.stats,.stats.three{grid-template-columns:1fr 1fr}
+    .grid2{grid-template-columns:1fr}h3.big{font-size:23px}
+    table{font-size:11.6px}td,th{padding:6px 7px}
+  }
+</style>
+</head>
+<body>
+<div style="max-width:930px;margin:0 auto;padding:16px 62px 0;background:#fff"><a href="Minecraft-Sleep-Videos-Performance-Report.pdf" download style="display:inline-block;background:#111;color:#fff;padding:11px 20px;border-radius:9px;font:600 14px/1 Inter,Segoe UI,system-ui,sans-serif;text-decoration:none">Download as PDF</a></div>
+<div class="page">
+
+<div class="cover">
+  <div class="kicker">Performance report &middot; 4 September 2026</div>
+  <h1>Minecraft Sleep Videos</h1>
+  <div class="sub">Every kind of &ldquo;fall asleep to Minecraft&rdquo; video on YouTube, measured:
+  which sub-genres win, which titles win, which lengths win, and which channels are pulling millions
+  of views from under 3,000 subscribers.</div>
+  <div class="cmeta">
+    <div>Videos measured<b>3,500+</b></div>
+    <div>In-genre after filtering<b>593</b></div>
+    <div>Channels<b>196</b></div>
+    <div>Catalogues dumped<b>26</b></div>
+  </div>
+</div>
+
+<div class="verdict">
+  <h2>The verdict in 60 seconds</h2>
+  <p><b>This is the most subscriber-independent niche on YouTube.</b> The single best performer
+  found is <b>BeforePhantoms — 31,500 subscribers, median 5,369,237 views. That is 170&times; its own
+  subscriber count</b>, with a best video at 9,849,851. Below it sits a whole cluster of channels
+  under 4,000 subscribers pulling six figures a video.</p>
+  <p><b>Two title templates account for most of the small-channel wins.</b> The
+  <b>nostalgia POV</b> template (<span class="tt">POV: it&rsquo;s 2014 and you fell asleep playing
+  Minecraft</span>) and the <b>lowercase comfort</b> template
+  (<span class="tt">relax, everything will be okay…</span>). Both are being copied, verbatim, by
+  dozens of channels — and both still work.</p>
+  <p><b>But be honest about the odds.</b> Across 99 long-form videos using the nostalgia template,
+  the <b>median got 1,954 views and 60% got under 5,000</b>. One in four cleared 100,000. This is a
+  cheap lottery ticket with an enormous jackpot, not a reliable income.</p>
+  <p><b>Silence beats talking, and there is a controlled test.</b> InfiniteDrift publishes both
+  styles to the same 307,000 subscribers: its &ldquo;No Commentary&rdquo; longplays median
+  <b>257,000 views</b>, its narrated videos <b>28,000</b> — a <b>9.2&times;</b> gap from format
+  alone. And <b>story-reading over Minecraft is the worst sub-genre measured</b>, median
+  <b>9,436 views</b> against 261,300 for ambience.</p>
+</div>
+
+<!-- 01 -->
+<div class="secwrap">
+<h2 class="sec">01 &middot; Method</h2>
+<h3 class="big">What was measured</h3>
+<p class="lead">36 search queries aimed at every angle of Minecraft sleep content, then 26 full
+channel back-catalogues dumped video-by-video, then subscriber counts and upload dates pulled per
+channel and per video. Everything here is a live-pulled number.</p>
+<div class="stats">
+  <div class="stat"><b>1,683</b><span>unique videos pulled with live view counts</span></div>
+  <div class="stat"><b>593</b><span>genuinely Minecraft &times; sleep after filtering</span></div>
+  <div class="stat"><b>196</b><span>distinct channels in the filtered set</span></div>
+  <div class="stat"><b>26</b><span>channel catalogues dumped in full, ~2,500 further videos</span></div>
+</div>
+<div class="call w"><b>The filtering matters more than usual here</b>
+Raw search for &ldquo;minecraft rain sleep&rdquo; returns a flood of generic rain-and-thunder
+channels that have nothing to do with Minecraft — <b>30% of raw results had no mention of Minecraft
+in the title at all</b>. Those were removed, along with high-energy gaming videos (100 Days,
+speedruns, cave-sound memes) that match on keywords but are not sleep content. The 593 that
+survived are the real genre.</div>
+<div class="call"><b>Two different medians appear in this report — both are true</b>
+A <b>search median</b> is computed over videos YouTube surfaced, so it over-represents winners. A
+<b>catalogue median</b> is computed over everything a channel has ever posted, so it shows what a
+typical upload really gets. They differ wildly: Drift Away Ambience has a search median of
+<b>364,422</b> and a catalogue median of <b>62,000</b>. Both numbers are labelled wherever they
+appear. The catalogue median is the one to plan with.</div>
+</div>
+
+<!-- 02 -->
+<div class="secwrap pb">
+<h2 class="sec">02 &middot; The leaderboard</h2>
+<h3 class="big">The biggest Minecraft sleep videos on YouTube</h3>
+<p class="lead">Top 26 by view count, with real upload dates. Note how many are recent — this is not
+a niche coasting on old uploads.</p>
+<table>
+  <caption>Upload dates pulled per video. Sub-genre is this report&rsquo;s classification.</caption>
+  <thead><tr><th>Uploaded</th><th class="n">Views</th><th class="n">Length</th><th>Channel</th><th>Title</th></tr></thead>
+  <tbody>
+    <tr class="hi"><td>Aug 2020</td><td class="n">22,186,377</td><td class="n">10h00</td><td>NoobAlike</td><td>Minecraft Relaxing Music Box 10 Hours (Rain + Visuals)</td></tr>
+    <tr><td>Jul 2017</td><td class="n">20,536,090</td><td class="n">1h24</td><td>Ephemeral Rift</td><td>Sleep for the Sleepless ASMR</td></tr>
+    <tr class="hi"><td><b>Jun 2025</b></td><td class="n">17,234,888</td><td class="n">6h27</td><td>Drift Away Ambience</td><td>no more thinking tonight… (minecraft music w/ soft rain)</td></tr>
+    <tr><td>Jul 2021</td><td class="n">13,665,228</td><td class="n">3h10</td><td>InfiniteDrift</td><td>Minecraft Relaxing Longplay — Building a Peaceful Ocean Home (No Commentary)</td></tr>
+    <tr><td>Jul 2021</td><td class="n">11,668,245</td><td class="n">2h34</td><td>InfiniteDrift</td><td>Minecraft Relaxing Longplay — Cozy Rainfall, Building a Spruce Cabin</td></tr>
+    <tr class="hi"><td><b>Nov 2024</b></td><td class="n">9,849,851</td><td class="n">3h00</td><td>BeforePhantoms</td><td>relax, everything will be okay… (minecraft c418 music &amp; ambience)</td></tr>
+    <tr class="hi"><td><b>Nov 2025</b></td><td class="n">7,704,825</td><td class="n">1h00</td><td>aCookieGod</td><td>1 hour of minecraft facts to help you sleep</td></tr>
+    <tr><td>Jun 2024</td><td class="n">5,741,402</td><td class="n">6h24</td><td>Drift Away Ambience</td><td>tomorrow, you&rsquo;ll feel better… (minecraft music, fire &amp; rain)</td></tr>
+    <tr><td>Jul 2022</td><td class="n">5,489,211</td><td class="n">10h00</td><td>Sound</td><td>Minecraft Relaxing Music and Rain for 10 Hours</td></tr>
+    <tr><td>Dec 2018</td><td class="n">5,405,807</td><td class="n">1h20</td><td>bbswitzer</td><td>1 hour 20 minutes of relaxing Minecraft Parkour (Nostalgia, Scenery, No Ads)</td></tr>
+    <tr class="hi"><td><b>Mar 2025</b></td><td class="n">5,369,237</td><td class="n">3h00</td><td>BeforePhantoms</td><td>minecraft music for studying (c418 &amp; lena raine)</td></tr>
+    <tr><td>Dec 2022</td><td class="n">5,294,637</td><td class="n">8h00</td><td>CozyCraft</td><td>❄️ Minecraft Winter Cabin w/ C418 Music | 8 Hours</td></tr>
+    <tr><td>Apr 2022</td><td class="n">4,767,208</td><td class="n">3h07</td><td>WaxFraud</td><td>Minecraft Survival — Relaxing Longplay, Mountain Tunnel (No Commentary)</td></tr>
+    <tr class="hi"><td><b>Jul 2025</b></td><td class="n">4,723,511</td><td class="n">6h49</td><td>Drift Away Ambience</td><td>some peace for hard nights… (minecraft music, soft rain &amp; water)</td></tr>
+    <tr><td>Jan 2019</td><td class="n">4,700,789</td><td class="n">1h00</td><td>isaacwhy</td><td>you fell asleep with minecraft open on a cool 2012 mid-summer night</td></tr>
+    <tr><td>Dec 2022</td><td class="n">4,606,150</td><td class="n">1h00</td><td>Minecraft (official)</td><td>Minecraft Soothing Scenes – Relaxing Fireplace</td></tr>
+    <tr><td>Aug 2022</td><td class="n">4,376,906</td><td class="n">10h00</td><td>NoobAlike</td><td>Minecraft Relaxing Music Box 10 Hours (DARK MODE + rain)</td></tr>
+    <tr><td>Dec 2022</td><td class="n">3,600,247</td><td class="n">1h01</td><td>Chilled Fox</td><td>it&rsquo;s 2014 and you fell asleep playing minecraft over christmas break</td></tr>
+    <tr><td>Feb 2022</td><td class="n">3,507,805</td><td class="n">3h09</td><td>WaxFraud</td><td>Minecraft Relaxing Longplay — Rainy Spruce Cottage</td></tr>
+    <tr class="hi"><td><b>Dec 2024</b></td><td class="n">3,398,494</td><td class="n">3h43</td><td>MadMorph</td><td>Fall asleep while I play Minecraft</td></tr>
+    <tr><td>Apr 2014</td><td class="n">3,305,028</td><td class="n">0h36</td><td>Ephemeral Rift</td><td>ASMR Minecraft — Sanctuary Part 1</td></tr>
+    <tr><td>Oct 2023</td><td class="n">3,290,712</td><td class="n">1h00</td><td>ambient craft</td><td>those were the days.</td></tr>
+    <tr><td>May 2021</td><td class="n">3,119,030</td><td class="n">2h38</td><td>InfiniteDrift</td><td>Building a Cozy Cottage in the Rain (No Commentary)</td></tr>
+    <tr class="hi"><td><b>Oct 2025</b></td><td class="n">3,117,115</td><td class="n">11h54</td><td>Drift Away Ambience</td><td>stop thinking for a moment… (minecraft music w/ soft rain, water)</td></tr>
+    <tr><td>Jun 2021</td><td class="n">3,082,639</td><td class="n">3h31</td><td>InfiniteDrift</td><td>Peaceful Exploration, Building a Cozy Hilltop Home</td></tr>
+    <tr><td>Aug 2024</td><td class="n">3,076,198</td><td class="n">3h00</td><td>Jojo&rsquo;s ASMR</td><td>99.99% of YOU will sleep to this ASMR</td></tr>
+  </tbody>
+</table>
+<div class="call g"><b>The niche is alive, not archived</b>
+Six of the top 26 were uploaded in the last 24 months, and the <b>June 2025</b> Drift Away Ambience
+video at 17.2M is accumulating views faster than most of the 2020&ndash;2022 cohort. New entrants
+are still landing eight-figure videos. Compare that with the <em>nostalgia</em> sub-genre, whose top
+entries are all 2018&ndash;2019 — that template is older and more contested.</div>
+</div>
+
+<!-- 03 -->
+<div class="secwrap pb">
+<h2 class="sec">03 &middot; Sub-genres</h2>
+<h3 class="big">What kind of Minecraft sleep video wins</h3>
+<p class="lead">Every video in the filtered set was classified into a sub-genre by title. This is the
+central table of the report.</p>
+<table>
+  <caption>593 Minecraft sleep/relax videos, classified by title. Search-surfaced medians.</caption>
+  <thead><tr><th>Sub-genre</th><th class="n">n</th><th class="n">Median views</th><th class="n">Mean</th>
+  <th class="n">p90</th><th class="n">Median length</th></tr></thead>
+  <tbody>
+    <tr class="hi"><td><b>Ambience / music</b> &mdash; C418 + rain, no voice</td><td class="n">151</td><td class="n win">261,300</td><td class="n">1,113,234</td><td class="n">2,563,848</td><td class="n">8h19</td></tr>
+    <tr class="hi"><td><b>Voiced commentary</b> &mdash; &ldquo;fall asleep while I play&rdquo;</td><td class="n">120</td><td class="n win">208,841</td><td class="n">713,535</td><td class="n">1,369,560</td><td class="n">3h09</td></tr>
+    <tr><td><b>Nostalgia-framed</b> &mdash; &ldquo;it&rsquo;s 2014 and you fell asleep…&rdquo;</td><td class="n">36</td><td class="n">197,839</td><td class="n">742,097</td><td class="n">1,905,663</td><td class="n">3h26</td></tr>
+    <tr><td>Other / mixed</td><td class="n">53</td><td class="n">196,307</td><td class="n">530,339</td><td class="n">1,280,973</td><td class="n">1h56</td></tr>
+    <tr><td>ASMR</td><td class="n">52</td><td class="n">133,155</td><td class="n">817,183</td><td class="n">1,083,937</td><td class="n">1h06</td></tr>
+    <tr><td>Facts / lore narration</td><td class="n">34</td><td class="n">119,299</td><td class="n">575,829</td><td class="n">1,296,248</td><td class="n">2h01</td></tr>
+    <tr><td>Relaxing longplay / building, no commentary</td><td class="n">44</td><td class="n">88,358</td><td class="n">301,224</td><td class="n">869,514</td><td class="n">3h15</td></tr>
+    <tr><td>Parkour used as wallpaper</td><td class="n">18</td><td class="n lose">14,597</td><td class="n">112,062</td><td class="n">426,348</td><td class="n">1h52</td></tr>
+    <tr><td><b>Story / Reddit reading over Minecraft</b></td><td class="n">85</td><td class="n lose">9,436</td><td class="n">212,818</td><td class="n">760,284</td><td class="n">3h01</td></tr>
+  </tbody>
+</table>
+
+<div class="call r"><b>The two results that will surprise you</b>
+<b>1. Parkour-as-wallpaper is a graveyard — median 14,597 views.</b> The endless-parkour background
+is the visual everyone associates with this content, and on its own it does not work. It is the
+<em>audio</em> people come for.<br>
+<b>2. Story reading over Minecraft is the worst of all — median 9,436.</b> It has a respectable p90
+of 760,284, so the ceiling is real (babyjamie1 has a 2.2M video), but the typical attempt gets under
+ten thousand views. This is a 28&times; gap against ambience. If you are planning to talk over
+Minecraft, this is the number to take seriously.</div>
+
+<div class="call"><b>Cross-check</b>
+A second, independently-built classification over 470 Minecraft-titled videos produced the same
+ordering at the bottom — story/Reddit reading last on <b>9,951</b> median — and put nostalgia
+(197,849), longplay (194,743) and ambience (180,235) in a near-tie at the top. Two different filters,
+same conclusion: <b>the wordless sub-genres beat the talking ones, and story-reading is last by a
+factor of about twenty.</b></div>
+</div>
+
+<!-- 03b -->
+<div class="secwrap pb">
+<h2 class="sec">03b &middot; Controlled tests</h2>
+<h3 class="big">Two experiments that remove channel size from the question</h3>
+<p class="lead">Cross-channel medians are always confounded — big channels get more views for reasons
+that have nothing to do with format. The only clean way to test a format is to compare videos
+<em>inside a single channel</em>. Two such tests exist in this data, and they point in opposite
+directions on the question that matters most.</p>
+
+<div class="call g"><b>Test 1 — No commentary beats commentary by 9.2&times; <span class="tag g">Strongest evidence in the report</span></b>
+<b>InfiniteDrift</b> (307,000 subscribers) publishes both styles. Same channel, same subscribers,
+same thumbnail style — only the format differs.
+<table style="margin:12px 0 4px">
+  <thead><tr><th>Format</th><th class="n">Videos</th><th class="n">Median views</th></tr></thead>
+  <tbody>
+    <tr class="hi"><td><b>Explicitly &ldquo;No Commentary&rdquo; longplay</b></td><td class="n">40</td><td class="n win">257,000</td></tr>
+    <tr><td>Narrated cozy builds and SMP episodes</td><td class="n">156</td><td class="n lose">28,000</td></tr>
+  </tbody>
+</table>
+<b>A 9.2&times; gap from silence alone.</b> A separate cross-channel comparison on an independent
+search pool put the same gap at 3.6&times; (no-commentary channels median 797,448 against voiced
+channels 222,846). So the effect is somewhere between roughly 3.6&times; and 9&times; depending on
+method — but every method agrees on the direction.</div>
+
+<div class="call w"><b>Test 2 — Putting &ldquo;sleep&rdquo; in the title is NOT a universal lever</b>
+This is the counterweight, and it is important. <b>Egush</b> is the only channel with a large,
+balanced sample on both sides: 51 sleep-titled videos against 50 that are not.
+<b>The sleep-titled ones underperform by 28%</b> — median 39,000 against 54,500. Two smaller
+channels go the other way (Eider&rsquo;s Movies <b>3.42&times;</b>, Vembo <b>1.86&times;</b>), so the
+honest read is that a literal sleep promise in the title is <b>channel-specific, not a guaranteed
+multiplier</b>. Contrast that with the previous report&rsquo;s finding on MadMorph, where the
+framing was worth 5.6&times; — that held across 200 videos on a channel whose <em>entire identity</em>
+is the sleep format. The framing works when it is the whole proposition, not when it is bolted on.</div>
+
+<div class="call r"><b>Two labelling errors worth knowing about, found while checking</b>
+<b>aCookieGod is not a sleep channel.</b> With 8.09M subscribers, its median video is 5,600,000
+views and its top 20 are all &ldquo;100 Days&rdquo; hardcore challenges. Its
+&ldquo;1 hour of minecraft facts to help you sleep&rdquo; got 7,704,825 — only <b>1.38&times;</b> its
+own normal median. It is a mainstream Minecraft channel whose long videos happen to get used as
+sleep content, not evidence that the sleep format scales.<br>
+<b>&ldquo;Caddy Sleeps&rdquo; contains no Minecraft at all</b> — it is repackaged Caddicarus retro-gaming
+commentary. Zero of 50 videos mention Minecraft. Name-matching is not format-matching in this niche.</div>
+</div>
+
+<!-- 04 -->
+<div class="secwrap pb">
+<h2 class="sec">04 &middot; The outliers</h2>
+<h3 class="big">Tiny channels beating enormous ones</h3>
+<p class="lead">This is the striking part. Ranked by <b>median views divided by subscriber
+count</b> — the measure of how far a channel punches above its size.</p>
+<table>
+  <caption>Subscriber counts pulled live per channel. Search-surfaced medians, minimum 3 videos in the set.</caption>
+  <thead><tr><th>Channel</th><th class="n">Subs</th><th class="n">n</th><th class="n">Median views</th>
+  <th class="n">Best video</th><th class="n">Views per sub</th></tr></thead>
+  <tbody>
+    <tr class="hi"><td><b>BeforePhantoms</b></td><td class="n">31,500</td><td class="n">3</td><td class="n">5,369,237</td><td class="n">9,849,851</td><td class="n win">170&times;</td></tr>
+    <tr class="hi"><td><b>Sleepy Drifter</b></td><td class="n">3,170</td><td class="n">4</td><td class="n">422,341</td><td class="n">743,271</td><td class="n win">133&times;</td></tr>
+    <tr class="hi"><td><b>Subwoofer Lullabies</b></td><td class="n">1,800</td><td class="n">3</td><td class="n">172,339</td><td class="n">250,735</td><td class="n win">96&times;</td></tr>
+    <tr class="hi"><td><b>Stains</b></td><td class="n">2,420</td><td class="n">5</td><td class="n">220,865</td><td class="n">458,429</td><td class="n win">91&times;</td></tr>
+    <tr><td>Faded Memories</td><td class="n">1,660</td><td class="n">3</td><td class="n">111,249</td><td class="n">122,662</td><td class="n">67&times;</td></tr>
+    <tr><td>Daydream Exchange</td><td class="n">3,650</td><td class="n">3</td><td class="n">207,159</td><td class="n">616,250</td><td class="n">57&times;</td></tr>
+    <tr><td>Vibe Nights x Minecraft</td><td class="n">2,520</td><td class="n">3</td><td class="n">68,927</td><td class="n">574,773</td><td class="n">27&times;</td></tr>
+    <tr><td>Darkcraft Dreams</td><td class="n">2,730</td><td class="n">5</td><td class="n">59,468</td><td class="n">236,765</td><td class="n">22&times;</td></tr>
+    <tr><td>Cinematic Player</td><td class="n">13,000</td><td class="n">4</td><td class="n">262,561</td><td class="n">742,275</td><td class="n">20&times;</td></tr>
+    <tr><td>Eider&rsquo;s Movies</td><td class="n">20,100</td><td class="n">5</td><td class="n">275,227</td><td class="n">607,499</td><td class="n">14&times;</td></tr>
+    <tr><td>InfiniteDrift</td><td class="n">307,000</td><td class="n">7</td><td class="n">3,082,639</td><td class="n">13,665,228</td><td class="n">10&times;</td></tr>
+    <tr><td>WaxFraud</td><td class="n">430,000</td><td class="n">3</td><td class="n">3,507,805</td><td class="n">4,767,208</td><td class="n">8&times;</td></tr>
+    <tr><td>Loopy Longplays</td><td class="n">188,000</td><td class="n">7</td><td class="n">979,003</td><td class="n">1,379,154</td><td class="n">5&times;</td></tr>
+    <tr><td>babyjamie1</td><td class="n">307,000</td><td class="n">13</td><td class="n">1,144,913</td><td class="n">2,239,150</td><td class="n">4&times;</td></tr>
+    <tr><td>CottonVelvet</td><td class="n">90,600</td><td class="n">14</td><td class="n">307,378</td><td class="n">1,778,394</td><td class="n">3&times;</td></tr>
+    <tr><td>Drift Away Ambience</td><td class="n">284,000</td><td class="n">52</td><td class="n">364,422</td><td class="n">17,234,888</td><td class="n">1.3&times;</td></tr>
+    <tr><td>CozyCraft</td><td class="n">117,000</td><td class="n">19</td><td class="n">159,951</td><td class="n">5,294,637</td><td class="n">1.4&times;</td></tr>
+    <tr><td>MadMorph</td><td class="n">851,000</td><td class="n">38</td><td class="n">326,882</td><td class="n">3,398,494</td><td class="n">0.4&times;</td></tr>
+    <tr><td>Minecraft (official)</td><td class="n">22,600,000</td><td class="n">5</td><td class="n">1,800,643</td><td class="n">4,606,150</td><td class="n lose">0.08&times;</td></tr>
+    <tr><td>iDeactivateMC</td><td class="n">1,670,000</td><td class="n">13</td><td class="n">115,363</td><td class="n">304,067</td><td class="n lose">0.07&times;</td></tr>
+  </tbody>
+</table>
+
+<div class="call g"><b>What this table actually proves</b>
+<b>Subscribers do not drive views in this niche.</b> Minecraft&rsquo;s own official channel — 22.6
+million subscribers — gets 0.08 views per subscriber on its sleep content. A 1,800-subscriber
+channel called Subwoofer Lullabies gets 96. The traffic comes from <b>search and suggested</b>,
+where the title and thumbnail are the entire pitch and nobody can see how big you are. That is why
+a brand-new channel is not meaningfully behind here.</div>
+
+<div class="call w"><b>And the other half of the table, which nobody screenshots</b>
+The same sweep found channels of identical size getting nothing: <b>Dreamy Sleep Cozy</b> (1,110
+subs, median <b>187</b> views across 14 videos), <b>Sleepy Ambience</b> (1,310 subs, median
+<b>399</b>), <b>The Red Bed</b> (1,490 subs, median <b>4,532</b>), and two channels whose median
+across the sample was literally <b>0 and 1 views</b>. Small channels in this niche either hit or
+score nothing at all. There is very little middle.</div>
+</div>
+
+<!-- 05 -->
+<div class="secwrap pb">
+<h2 class="sec">05 &middot; The templates</h2>
+<h3 class="big">Two title formulas doing most of the work</h3>
+
+<h4>Template 1 — the nostalgia POV</h4>
+<p><span class="tt">POV: it&rsquo;s 2014 and you fell asleep playing Minecraft</span></p>
+<p>67 different channels are running this. It is copied nearly word-for-word, with the year and the
+setting swapped. The results, and the price of entry:</p>
+<table>
+  <caption>Long-form (20 min+) videos using the nostalgia template. The short &ldquo;bro wake up it&rsquo;s 2014&rdquo; meme clips are excluded — different format.</caption>
+  <thead><tr><th>Channel</th><th class="n">Subs</th><th class="n">Views</th><th class="n">Length</th><th>Title</th></tr></thead>
+  <tbody>
+    <tr class="hi"><td>isaacwhy</td><td class="n">&mdash;</td><td class="n">4,700,789</td><td class="n">1h00</td><td>you fell asleep with minecraft open on a cool 2012 mid-summer night</td></tr>
+    <tr class="hi"><td>Chilled Fox</td><td class="n">&mdash;</td><td class="n">3,600,247</td><td class="n">1h01</td><td>it&rsquo;s 2014 and you fell asleep playing minecraft over christmas break</td></tr>
+    <tr><td>liwla</td><td class="n">&mdash;</td><td class="n">1,286,718</td><td class="n">0h59</td><td>it&rsquo;s 2014 and you fell asleep playing minecraft</td></tr>
+    <tr><td>Last Lantern</td><td class="n">&mdash;</td><td class="n">1,112,039</td><td class="n">1h25</td><td>POV : It&rsquo;s 2014 and you fell asleep playing minecraft</td></tr>
+    <tr class="hi"><td><b>Sleepy Drifter</b></td><td class="n">3,170</td><td class="n">743,278</td><td class="n">4h00</td><td>POV : It&rsquo;s 2014 and you fell asleep playing minecraft</td></tr>
+    <tr class="hi"><td><b>Sleepy Drifter</b></td><td class="n">3,170</td><td class="n">657,745</td><td class="n">3h59</td><td>wake up bro, it&rsquo;s 2014…</td></tr>
+    <tr><td>BlocksCozy</td><td class="n">&mdash;</td><td class="n">528,299</td><td class="n">0h22</td><td>it&rsquo;s 2014 and you fell asleep playing minecraft</td></tr>
+    <tr><td>Ambience Crafting</td><td class="n">&mdash;</td><td class="n">496,317</td><td class="n">4h12</td><td>POV : You Fell Asleep In 2012 Minecraft</td></tr>
+    <tr class="hi"><td><b>Stains</b></td><td class="n">2,420</td><td class="n">458,639</td><td class="n">4h04</td><td>POV: You fell asleep in 2014 and everything is okay again</td></tr>
+    <tr><td>Ambient Crafts</td><td class="n">54,700</td><td class="n">446,283</td><td class="n">1h54</td><td>it&rsquo;s 2014 and you fell asleep playing minecraft with your best friend.</td></tr>
+    <tr><td>jankler</td><td class="n">&mdash;</td><td class="n">331,652</td><td class="n">1h00</td><td>wake up bro, it&rsquo;s 2013</td></tr>
+    <tr class="hi"><td><b>Subwoofer Lullabies</b></td><td class="n">1,800</td><td class="n">250,752</td><td class="n">2h48</td><td>POV: it&rsquo;s 2014 and you open minecraft on a rainy morning…</td></tr>
+    <tr class="hi"><td><b>Stains</b></td><td class="n">2,420</td><td class="n">239,565</td><td class="n">3h53</td><td>POV: You fell asleep in 2014 playing Minecraft on a snowy night</td></tr>
+    <tr class="hi"><td><b>Subwoofer Lullabies</b></td><td class="n">1,800</td><td class="n">231,582</td><td class="n">3h17</td><td>go to sleep bro, it&rsquo;s 2014 again…</td></tr>
+    <tr class="hi"><td><b>Faded Memories</b></td><td class="n">1,660</td><td class="n">122,662</td><td class="n">4h00</td><td>pov: you fell asleep in old minecraft</td></tr>
+  </tbody>
+</table>
+
+<div class="call r"><b>The template&rsquo;s real odds <span class="tag r">Read this before copying it</span></b>
+Across <b>99 long-form videos</b> using this template: median <b>1,954 views</b>. <b>60% got under
+5,000 views. 25% cleared 100,000.</b> Ambience Crafting posted eight of them — one hit 496,317, the
+other seven have a median of <b>854</b>. Darkcraft Dreams posted one and got <b>1,213</b>.
+The template is not magic; it is a cheap ticket in a lottery whose jackpot is enormous.
+<b>The one clear signal in the data: the 20&ndash;60 minute versions have a median of 72,746
+against 642 for the 2&ndash;4 hour ones.</b> Shorter, better-made entries win.</div>
+
+<h4>Template 2 — the lowercase comfort line</h4>
+<p>The other winning shape has no Minecraft reference in the title at all — just a quiet
+second-person sentence with a trailing ellipsis, and the Minecraft detail in brackets.</p>
+<div class="grid2">
+<div class="card acc">
+<h4>The winners</h4>
+<ul style="margin-bottom:0">
+<li><span class="tt">all of a sudden, everything becomes alright...</span><br><b>18,000,000</b> — Ambient Crafts (54,700 subs)</li>
+<li><span class="tt">no more thinking tonight... (minecraft music w/ soft rain)</span><br><b>17,234,888</b> — Drift Away Ambience</li>
+<li><span class="tt">relax, everything will be okay…</span><br><b>9,849,851</b> — BeforePhantoms (31,500 subs)</li>
+<li><span class="tt">tomorrow, you'll feel better...</span><br><b>5,741,402</b> — Drift Away Ambience</li>
+<li><span class="tt">some peace for hard nights...</span><br><b>4,723,511</b> — Drift Away Ambience</li>
+<li><span class="tt">those were the days.</span><br><b>3,290,712</b> — ambient craft</li>
+<li><span class="tt">stop thinking for a moment...</span><br><b>3,117,115</b> — Drift Away Ambience</li>
+<li><span class="tt">why are you still awake?..</span><br><b>1,300,000</b> — Drift Away Ambience</li>
+</ul>
+</div>
+<div class="card">
+<h4>The rules of the shape</h4>
+<ul style="margin-bottom:0">
+<li><b>All lowercase.</b> Every single one.</li>
+<li><b>Trailing ellipsis</b> — the sentence trails off, like the viewer is already drifting.</li>
+<li><b>Second person, reassuring.</b> It talks to someone having a bad night: <em>you&rsquo;ll feel
+better</em>, <em>everything will be okay</em>, <em>you need it</em>.</li>
+<li><b>No hype words, no numbers, no caps, no clickbait.</b></li>
+<li><b>The Minecraft detail lives in brackets</b> at the end, doing the SEO job the title itself
+refuses to do.</li>
+</ul>
+<p style="margin-top:12px;margin-bottom:0"><b>This is the strongest packaging pattern found in the
+entire dataset</b>, and unlike the nostalgia template it is still producing eight-figure videos in
+2025.</p>
+</div>
+</div>
+</div>
+
+<!-- 05b -->
+<div class="secwrap pb">
+<h2 class="sec">05b &middot; Packaging</h2>
+<h3 class="big">Which title words actually correlate with views</h3>
+<p class="lead">Measured across 473 videos that genuinely say &ldquo;Minecraft&rdquo; in the title —
+the generic rain mega-channels were stripped out first, because they otherwise make thunder and
+black-screen look like winners when they are just a different business.</p>
+<table>
+  <caption>Lift = median views WITH the feature ÷ median views WITHOUT it. 473 Minecraft-titled videos.</caption>
+  <thead><tr><th>Title feature</th><th class="n">n</th><th class="n">Lift</th><th>Read</th></tr></thead>
+  <tbody>
+    <tr class="hi"><td><b>Lowercase-only title</b></td><td class="n">118</td><td class="n win">2.46&times;</td><td>The strongest signal, on a large sample. Use it.</td></tr>
+    <tr><td>Comfort / reassurance phrasing</td><td class="n">12</td><td class="n">2.37&times;</td><td>Confounded — only two channels</td></tr>
+    <tr class="hi"><td><b>The word &ldquo;rain&rdquo;</b></td><td class="n">91</td><td class="n win">2.11&times;</td><td>Broad sample, genuinely predictive</td></tr>
+    <tr><td>Trailing &ldquo;…&rdquo;</td><td class="n">7</td><td class="n">1.59&times;</td><td>Right direction, sample too small to lean on</td></tr>
+    <tr><td>Second person (&ldquo;you&rdquo;, &ldquo;your&rdquo;)</td><td class="n">95</td><td class="n">1.26&times;</td><td>Mild positive</td></tr>
+    <tr><td>Nostalgia framing</td><td class="n">33</td><td class="n">1.19&times;</td><td>Mild positive</td></tr>
+    <tr><td>cave / cozy / fireplace / ASMR</td><td class="n">13&ndash;56</td><td class="n">1.05&ndash;1.16&times;</td><td>Neutral</td></tr>
+    <tr><td>thunder / black screen</td><td class="n">8&ndash;14</td><td class="n">0.90&times;</td><td>Neutral-to-negative <em>inside</em> Minecraft content</td></tr>
+    <tr><td>C418 named / &ldquo;soundtrack&rdquo; / &ldquo;longplay&rdquo;</td><td class="n">27&ndash;88</td><td class="n">0.69&ndash;0.75&times;</td><td>Slight penalty</td></tr>
+    <tr><td><b>The word &ldquo;sleep&rdquo;, &ldquo;relaxing&rdquo;, &ldquo;N Hours&rdquo;, Title Case</b></td><td class="n">139&ndash;277</td><td class="n lose">0.40&ndash;0.54&times;</td><td>Real penalty, large samples</td></tr>
+    <tr><td><b>ALL CAPS, or &ldquo;parkour&rdquo;</b></td><td class="n">4&ndash;18</td><td class="n lose">0.10&ndash;0.14&times;</td><td>Worst features measured</td></tr>
+  </tbody>
+</table>
+<div class="call"><b>The counter-intuitive result, stated plainly</b>
+Inside genuine Minecraft sleep content, <b>literally saying &ldquo;sleep&rdquo;, &ldquo;relaxing&rdquo;
+or &ldquo;10 Hours&rdquo; in the title correlates with roughly half the views</b>, and Title Case does
+too. The winners are understated lowercase diary sentences. Some of this is confounding — the
+channels confident enough to write a quiet title tend to be the better ones — but the direction is
+consistent with everything else in this report, and it lines up exactly with the comfort template in
+§05. <b>Write the title like a thought, not like a product listing.</b></div>
+
+<h3 class="big" style="margin-top:30px">The thumbnail convention</h3>
+<p class="lead">The top 20 Minecraft-titled videos&rsquo; thumbnails were downloaded and looked at
+directly. The convention is tight and it is nothing like standard YouTube advice.</p>
+<div class="stats">
+  <div class="stat"><b>70%</b><span>show an in-game Minecraft render</span></div>
+  <div class="stat"><b>5%</b><span>contain a human face &mdash; 19 of 20 have none</span></div>
+  <div class="stat"><b>70%</b><span>dark / night-coded</span></div>
+  <div class="stat"><b>65%</b><span>carry text, almost always 3 words or fewer</span></div>
+</div>
+<p>Recurring motifs, counted: <b>cozy cabin structure 45%</b>, <b>fireplace or campfire 40%</b>,
+<b>Minecraft logo lockup 25%</b> (only on the branded-longplay family), <b>visible bed 20%</b>,
+<b>rain on window 20%</b>, starry night sky 15%, cave-with-glowing-eyes 15%, axolotls 10%.
+The dominant colour scheme is <b>warm amber firelight against dark navy or black</b>. There are no
+bright or pastel thumbnails anywhere in the winning set.</p>
+<div class="call g"><b>The thumbnail spec</b>
+An in-game <b>cozy cabin render with a fireplace, a window and ideally a bed in frame</b>.
+Night-coded: one or two warm light sources against dark surroundings. Optional <b>1&ndash;3 word
+lowercase caption in a chunky pixel font</b>, white fill with a black outline — a mood phrase
+(&ldquo;quiet night&rdquo;, &ldquo;nostalgia&rdquo;), never a literal description of the contents.
+<b>No human face. No ALL CAPS. No pure black screen. No reaction collage.</b> The restraint is the
+genre signal.</div>
+</div>
+
+<!-- 06 -->
+<div class="secwrap pb">
+<h2 class="sec">06 &middot; Length</h2>
+<h3 class="big">How long these videos run</h3>
+<table>
+  <caption>593 Minecraft sleep videos by duration. Search-surfaced medians.</caption>
+  <thead><tr><th>Length</th><th class="n">n</th><th class="n">Median views</th><th class="n">Mean</th><th class="n">p90</th></tr></thead>
+  <tbody>
+    <tr><td>Under 30 min</td><td class="n">21</td><td class="n lose">51,614</td><td class="n">248,909</td><td class="n">426,408</td></tr>
+    <tr><td>30&ndash;60 min</td><td class="n">53</td><td class="n">179,420</td><td class="n">540,072</td><td class="n">1,250,850</td></tr>
+    <tr><td>1&ndash;2 h</td><td class="n">118</td><td class="n">124,856</td><td class="n">828,205</td><td class="n">2,444,655</td></tr>
+    <tr class="hi"><td><b>2&ndash;3 h</b></td><td class="n">81</td><td class="n win">238,620</td><td class="n">582,746</td><td class="n">1,149,716</td></tr>
+    <tr><td>3&ndash;5 h</td><td class="n">85</td><td class="n">129,779</td><td class="n">817,739</td><td class="n">2,359,647</td></tr>
+    <tr><td>5&ndash;8 h</td><td class="n">75</td><td class="n lose">44,886</td><td class="n">723,559</td><td class="n">1,642,169</td></tr>
+    <tr><td>8&ndash;12 h</td><td class="n">155</td><td class="n">174,773</td><td class="n">631,326</td><td class="n">1,369,560</td></tr>
+    <tr><td>12 h+</td><td class="n">5</td><td class="n">979,003</td><td class="n">713,293</td><td class="n">1,094,072</td></tr>
+  </tbody>
+</table>
+<p>Two shapes work and the valley between them does not. <b>2&ndash;3 hours is the best bucket with
+a real sample</b> (238,620 across 81 videos). <b>8&ndash;12 hours</b> is the other cluster — that is
+the wordless ambience business, where the pitch is &ldquo;this will outlast the night&rdquo;. The
+<b>5&ndash;8 hour</b> band is the worst of both: too long to be a session, not long enough to be the
+whole night. The 12h+ figure sits on five videos and should be ignored.</p>
+<div class="call"><b>Which length goes with which sub-genre</b>
+Ambience runs a median of <b>8h19</b>. Voiced commentary runs <b>3h09</b>. Nostalgia runs
+<b>3h26</b>. Nobody talks for eight hours and nobody puts a silent music loop out at ninety
+minutes — <b>the length is a property of the format, not a free choice.</b> Pick the format first.</div>
+</div>
+
+<!-- 07 -->
+<div class="secwrap pb">
+<h2 class="sec">07 &middot; Reality check</h2>
+<h3 class="big">What a typical upload actually gets</h3>
+<p class="lead">Twenty-six channels were dumped in full; the nine largest are shown here — every video they have ever posted, not
+just the ones search surfaced. These catalogue medians are the honest picture, and they are
+brutal.</p>
+<table>
+  <caption>Full catalogue dumps. &ldquo;Median&rdquo; here is across everything the channel has posted.</caption>
+  <thead><tr><th>Channel</th><th class="n">Subs</th><th class="n">Videos</th><th class="n">Catalogue median</th>
+  <th class="n">Best video</th><th class="n">Best ÷ median</th></tr></thead>
+  <tbody>
+    <tr class="hi"><td>Ambient Crafts</td><td class="n">54,700</td><td class="n">189</td><td class="n lose">921</td><td class="n">18,000,000</td><td class="n win">19,544&times;</td></tr>
+    <tr class="hi"><td>NoobAlike</td><td class="n">42,200</td><td class="n">45</td><td class="n lose">2,600</td><td class="n">22,000,000</td><td class="n win">8,462&times;</td></tr>
+    <tr><td>Sleepy Jeïco</td><td class="n">5,090</td><td class="n">45</td><td class="n">1,500</td><td class="n">3,000,000</td><td class="n">2,000&times;</td></tr>
+    <tr><td>BeforePhantoms</td><td class="n">31,500</td><td class="n">27</td><td class="n">15,000</td><td class="n">9,800,000</td><td class="n">653&times;</td></tr>
+    <tr><td>Sky chill</td><td class="n">15,900</td><td class="n">29</td><td class="n">5,600</td><td class="n">2,200,000</td><td class="n">393&times;</td></tr>
+    <tr><td>Cozy Bed</td><td class="n">35,800</td><td class="n">200</td><td class="n">3,400</td><td class="n">375,000</td><td class="n">110&times;</td></tr>
+    <tr><td>CozyCraft</td><td class="n">117,000</td><td class="n">182</td><td class="n">40,500</td><td class="n">2,700,000</td><td class="n">67&times;</td></tr>
+    <tr><td>Drift Away Ambience</td><td class="n">284,000</td><td class="n">189</td><td class="n">62,000</td><td class="n">3,100,000</td><td class="n">50&times;</td></tr>
+    <tr><td>CottonVelvet</td><td class="n">90,600</td><td class="n">31</td><td class="n">184,000</td><td class="n">1,700,000</td><td class="n">9&times;</td></tr>
+  </tbody>
+</table>
+<div class="call r"><b>The shape of this business</b>
+<b>Ambient Crafts has 189 videos with a median of 921 views — and one video with 18 million.</b>
+That is not a typo, and it is the defining fact of the niche. These channels are volume machines:
+they post constantly, almost everything dies, and once or twice a year something detonates and
+carries the channel. <b>CottonVelvet is the exception</b> — 31 videos, a 184,000 median and only a
+9&times; spread, which is what a consistent, well-executed longplay catalogue looks like.
+<br><br>Plan for the Ambient Crafts distribution, not the CottonVelvet one, unless you can
+genuinely produce at CottonVelvet&rsquo;s quality.</div>
+</div>
+
+<!-- 08 -->
+<div class="secwrap pb">
+<h2 class="sec">08 &middot; Risk</h2>
+<h3 class="big">The C418 copyright problem</h3>
+<div class="call r"><b>Verified, and it hits the best-performing sub-genre <span class="tag r">Real incident</span></b>
+The ambience sub-genre — the highest median in this report — runs almost entirely on C418&rsquo;s
+Minecraft soundtrack. In <b>October 2024, Warner Chappell filed Content ID claims against C418
+tracks it does not own</b>, including <em>Mice on Venus</em>. Real creators were hit, including
+Mumbo Jumbo. <b>C418 responded publicly and helped creators contest the claims</b>, so the claims
+were false positives rather than a legitimate rights holder acting — but the practical effect on a
+channel whose entire catalogue is C418 is the same: claimed videos, redirected revenue, and an
+appeals process.</div>
+<p><b>What that means in practice.</b> Mojang&rsquo;s usage guidelines do permit monetised use of
+official Minecraft music in game-related content, so you are within the rules. But being within the
+rules is not the same as being safe from an automated claim, and a channel running eight-hour C418
+loops has enormous exposure per upload. The channels doing this at scale accept that risk as a cost
+of business. <b>If you want the niche without the exposure, the voiced and longplay sub-genres do
+not depend on the soundtrack</b> — turn the in-game music off and the risk goes with it.</p>
+<div class="call"><b>Not verified</b>
+No Mojang or Microsoft statement on this content trend could be found, and no authoritative origin
+date for the &ldquo;you fell asleep playing Minecraft&rdquo; format as a named phenomenon. Treated
+as unknown, not as confirmed absence.</div>
+</div>
+
+<!-- 09 -->
+<div class="secwrap pb">
+<h2 class="sec">09 &middot; Why Minecraft</h2>
+<h3 class="big">Why this game owns the sleep niche</h3>
+<p class="lead">Three explanations hold up to sourcing, and they compound.</p>
+<div class="grid2">
+<div class="card">
+<h4>1. The soundtrack was built for this</h4>
+<p style="margin-bottom:0">C418&rsquo;s score was composed as deliberately ambient, lullaby-adjacent
+music — sparse piano, no percussion, no resolution. For a generation it is also the sound of being
+eleven years old. That is a nostalgia trigger and a sleep aid in the same file, which is why videos
+can be titled purely as emotional comfort and still rank.</p>
+</div>
+<div class="card">
+<h4>2. The worlds read as liminal space</h4>
+<p style="margin-bottom:0">Blocky, low-detail, empty, softly lit. Minecraft landscapes map directly
+onto the documented &ldquo;liminal space&rdquo; and dreamcore comfort aesthetics — places that feel
+familiar and unpeopled at once. It is a visual with nothing in it to snag attention, which is
+exactly the requirement.</p>
+</div>
+</div>
+<div class="card" style="margin-top:6px">
+<h4>3. Low-stimulation background media is a documented sleep and focus aid</h4>
+<p style="margin-bottom:0">Background noise and low-arousal video are an established coping tool for
+anxiety and ADHD — occupying the part of the mind that would otherwise race. Minecraft sleep content
+rides on top of an existing behaviour rather than inventing one, which is why the audience is
+already there and does not need converting. It also explains the second-person comfort titles:
+they speak directly to someone lying awake.</p>
+</div>
+</div>
+
+<!-- 10 -->
+<div class="secwrap pb">
+<h2 class="sec">10 &middot; What to do</h2>
+<h3 class="big">If you want to compete in this</h3>
+
+<div class="call g"><b>The ranked options, by evidence</b>
+<ol style="margin-bottom:0;margin-top:8px">
+<li><b>Lowercase comfort ambience (8&ndash;12 h).</b> Highest median in the dataset (261,300), still
+producing eight-figure videos in 2025, near-zero production cost, and it collects every positive
+title signal at once — lowercase, rain, second person, no hype. Downside: the C418 exposure and a
+catalogue median that can sit under 1,000 views for a long time.</li>
+<li><b>Relaxing longplay, no commentary (2&ndash;5 h).</b> Promoted on the strength of the
+controlled test — <b>9.2&times; over narrated video on the same channel</b>. Its cross-channel median
+looks low (88,358) only because dozens of tiny channels dilute the pool. CottonVelvet shows what a
+consistent catalogue looks like here: 31 videos, 184,000 median, best-to-median spread of only
+9&times;. No soundtrack risk if you use your own audio.</li>
+<li><b>Voiced &ldquo;fall asleep while I play&rdquo; (2&ndash;3 h).</b> Strong cross-channel median
+(208,841) and the most defensible long term — a voice cannot be cloned by the next 67 channels. But
+be clear-eyed: both controlled tests in this report say a voice <em>costs</em> views in the short
+run. You are trading immediate reach for an audience that actually belongs to you.</li>
+<li><b>Nostalgia POV (20&ndash;60 min).</b> Cheap and occasionally explosive, but 60% get under
+5,000 views and the top of the format is 2018&ndash;2019. Worth one attempt at the shorter length,
+not a strategy.</li>
+</ol></div>
+
+<div class="call w"><b>If you go voiced anyway, the data says how</b>
+<b>Commentate on the game, do not read at it.</b> The 208,841 bucket is people narrating what is
+happening on screen; the 9,436 bucket is people reading unrelated stories over footage. Same
+visual, same voice, a 22&times; difference. Keep the game as the subject of the talk, not the
+wallpaper behind it. And write the title as a quiet lowercase sentence regardless — the packaging
+rules in §05b apply to every sub-genre.</div>
+
+<div class="call w"><b>What the data says NOT to do</b>
+<b>Do not build on story-reading over Minecraft footage</b> (median 9,436) or on
+<b>parkour-as-wallpaper</b> (median 14,597). Both look like the obvious move and both are the two
+worst-performing sub-genres measured. If the plan involves talking, the evidence points at
+commentary on <em>what is happening in the game</em> rather than reading unrelated stories over it —
+that is the difference between the 208,841 bucket and the 9,436 one.</div>
+
+<div class="call p"><b>The one line to take away</b>
+A 1,800-subscriber channel is getting 96 views per subscriber in this niche while Minecraft&rsquo;s
+own 22.6-million-subscriber channel gets 0.08. <b>Nothing about your size is holding you back
+here.</b> The title, the length and the sub-genre are doing essentially all of the work — and this
+report tells you what all three should be.</div>
+</div>
+
+<div class="foot">
+<b>Sources &amp; confidence.</b> All view counts, durations, subscriber counts and upload dates were
+pulled live from YouTube on 4 September 2026 — 1,683 unique videos across 36 targeted search
+queries, filtered to 593 genuinely in-genre, plus full catalogue dumps of 26 leading channels
+(around 2,500 further videos). Sub-genre classification is by title keyword and is stated as such; a second,
+independently-built classification over a different filtered set is reported alongside it as a
+cross-check. Search-surfaced medians over-represent successful videos and are labelled distinctly
+from catalogue medians throughout. The C418 Content ID incident is sourced to contemporaneous
+reporting and C418&rsquo;s own public response. Items stated as unverified could not be confirmed
+against a primary source and are flagged rather than presented as fact.
+</div>
+
+</div>
+</body>
+</html>

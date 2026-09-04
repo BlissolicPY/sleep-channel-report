@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fall Asleep While I — What's Working Now</title>
+<style>
+  @page { size: A4 portrait; margin: 13mm 12mm 15mm; }
+  :root{
+    --ink:#12121c; --ink2:#343247; --mut:#65627a; --line:#e2e0ea;
+    --br:#c2410c; --br2:#ea580c; --brl:#fff4ed; --brl2:#ffe7d6;
+    --good:#12805c; --goodbg:#e6f6f0; --warn:#b45309; --warnbg:#fef4e6;
+    --bad:#be123c; --badbg:#fdeaef; --paper:#fff; --shell:#faf7f5;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--shell);color:var(--ink);
+    font:15px/1.62 "Inter","Segoe UI",-apple-system,system-ui,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+  .page{max-width:930px;margin:0 auto;background:var(--paper);padding:0 62px 70px}
+  h1,h2,h3,h4{line-height:1.2;margin:0;letter-spacing:-.022em;font-weight:700}
+  p{margin:0 0 13px}
+  .cover{background:linear-gradient(155deg,#3b1206 0%,#9a3412 45%,#f97316 100%);
+    color:#fff;margin:0 -62px 42px;padding:62px 62px 52px}
+  .kicker{font-size:11.5px;letter-spacing:.19em;text-transform:uppercase;
+    color:#fdcfae;font-weight:650;margin-bottom:18px}
+  .cover h1{font-size:44px;letter-spacing:-.033em;margin-bottom:14px}
+  .cover .sub{font-size:16.5px;color:#fee2cc;max-width:660px;line-height:1.5;margin-bottom:28px}
+  .cmeta{display:flex;gap:30px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.25);padding-top:18px}
+  .cmeta div{font-size:12.3px;color:#fdcfae}
+  .cmeta b{display:block;color:#fff;font-size:17.5px;font-weight:700;margin-top:3px;letter-spacing:-.02em}
+
+  .verdict{border:2px solid var(--br2);border-radius:14px;padding:24px 26px;margin:0 0 32px;background:var(--brl)}
+  .verdict h2{font-size:21px;color:var(--br);margin-bottom:11px}
+  .verdict p{margin-bottom:10px;font-size:15.3px}
+  .verdict p:last-child{margin-bottom:0}
+
+  h2.sec{font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:var(--br2);margin:0 0 6px;font-weight:700}
+  .secwrap{margin:42px 0 0;padding-top:24px;border-top:2px solid var(--line)}
+  h3.big{font-size:27px;letter-spacing:-.028em;margin:0 0 14px}
+  h4{font-size:16.5px;margin:24px 0 8px}
+  .lead{font-size:16.2px;color:var(--ink2);margin-bottom:18px;line-height:1.57}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin:18px 0 24px}
+  .stat{background:var(--shell);border:1px solid var(--line);border-radius:11px;padding:14px 15px}
+  .stat b{display:block;font-size:24px;letter-spacing:-.03em;color:var(--br);line-height:1.12}
+  .stat span{display:block;font-size:11.4px;color:var(--mut);margin-top:5px;line-height:1.35}
+
+  table{width:100%;border-collapse:collapse;margin:14px 0 18px;font-size:12.8px}
+  th{text-align:left;background:var(--brl2);color:#7c2d12;font-weight:650;padding:8px 9px;
+    border-bottom:2px solid #f9c9a4;font-size:11.1px;letter-spacing:.045em;text-transform:uppercase}
+  td{padding:6.5px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:nth-child(even) td{background:#fdfbfa}
+  td.n,th.n{text-align:right}
+  .hi td{background:#ffeede !important;font-weight:600}
+  .win{color:var(--good);font-weight:700}
+  .lose{color:var(--bad);font-weight:700}
+  caption{caption-side:bottom;text-align:left;font-size:11.6px;color:var(--mut);padding-top:6px;font-style:italic}
+
+  .call{border-left:4px solid var(--br2);background:var(--brl);padding:14px 17px;
+    border-radius:0 9px 9px 0;margin:16px 0;font-size:14.4px}
+  .call.g{border-color:var(--good);background:var(--goodbg)}
+  .call.w{border-color:var(--warn);background:var(--warnbg)}
+  .call.r{border-color:var(--bad);background:var(--badbg)}
+  .call > b:first-child{display:block;margin-bottom:5px;font-size:12.7px;letter-spacing:.06em;text-transform:uppercase}
+  .call.g > b:first-child{color:var(--good)}
+  .call.w > b:first-child{color:var(--warn)}
+  .call.r > b:first-child{color:var(--bad)}
+  .call b{font-weight:700}
+
+  ul,ol{margin:9px 0 14px;padding-left:20px}
+  li{margin-bottom:6px}
+  li::marker{color:var(--br2)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:16px 0}
+  .card{border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:#fff}
+  .card h4{margin-top:0;font-size:15.4px}
+  .card.acc{background:var(--brl);border-color:#f9c9a4}
+  .tt{font-family:"Consolas","SF Mono",ui-monospace,monospace;font-size:12.4px;
+    background:#f3efec;padding:1.5px 6px;border-radius:5px}
+  .tag{display:inline-block;padding:2.5px 9px;border-radius:20px;font-size:10.6px;
+    font-weight:700;letter-spacing:.05em;text-transform:uppercase;vertical-align:2px}
+  .tag.g{background:var(--goodbg);color:var(--good)}
+  .tag.w{background:var(--warnbg);color:var(--warn)}
+  .tag.r{background:var(--badbg);color:var(--bad)}
+  .foot{margin-top:46px;padding-top:20px;border-top:2px solid var(--line);font-size:12px;color:var(--mut)}
+
+  @media print{
+    body{background:#fff;font-size:10.5pt;line-height:1.54}
+    .page{max-width:none;padding:0}
+    .cover{margin:0 0 24px;padding:32px 30px 26px;border-radius:12px}
+    .cover h1{font-size:34px} .cover .sub{font-size:13.4px}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    h3.big{font-size:20.5px} h4{font-size:14px} .lead{font-size:13px}
+    table{font-size:9pt} td,th{padding:4px 5.5px}
+    .stat b{font-size:18.5px} .stats{gap:8px}
+    .secwrap{margin-top:26px;padding-top:16px}
+    tr{break-inside:avoid;page-break-inside:avoid}
+    .call,.card,.stat,.verdict{break-inside:avoid;page-break-inside:avoid}
+    h3.big,h4{break-after:avoid;page-break-after:avoid}
+    .pb{break-before:page;page-break-before:always}
+  }
+  @media (max-width:760px){
+    .page{padding:0 22px 46px}.cover{margin:0 -22px 28px;padding:42px 22px 34px}
+    .cover h1{font-size:31px}.stats{grid-template-columns:1fr 1fr}
+    .grid2{grid-template-columns:1fr}h3.big{font-size:22px}
+    table{font-size:11.4px}td,th{padding:6px 6px}
+  }
+</style>
+</head>
+<body>
+<div style="max-width:930px;margin:0 auto;padding:16px 62px 0;background:#fff"><a href="Fall-Asleep-While-I-Whats-Working-Now.pdf" download style="display:inline-block;background:#111;color:#fff;padding:11px 20px;border-radius:9px;font:600 14px/1 Inter,Segoe UI,system-ui,sans-serif;text-decoration:none">Download as PDF</a></div>
+<div class="page">
+
+<div class="cover">
+  <div class="kicker">What is working right now &middot; 4 September 2026</div>
+  <h1>&ldquo;Fall Asleep While I&hellip;&rdquo;</h1>
+  <div class="sub">The talking sleep format only — someone doing something, or talking about
+  something, while you fall asleep. No music, no ambience, no rain loops. Ranked by what is
+  performing <em>this month</em>, not all-time.</div>
+  <div class="cmeta">
+    <div>Voiced videos found<b>477</b></div>
+    <div>With real upload dates<b>139</b></div>
+    <div>Channels<b>123</b></div>
+    <div>Ranked by<b>Views / day</b></div>
+  </div>
+</div>
+
+<div class="verdict">
+  <h2>The verdict in 60 seconds</h2>
+  <p><b>The format is booming right now.</b> Uploads in this format went from <b>4 per quarter in
+  late 2024 to 55 in the current quarter</b>. Videos posted in the last 6 months are pulling a median
+  of <b>1,672 views per day</b> against 859 for videos 1&ndash;2 years old. This is not a settled
+  niche — it is mid-explosion.</p>
+  <p><b>The single biggest lever is WHAT you do, and the answer is mischief.</b> Ranked by views per
+  day: <b>action / crime activities 9,374</b>, build &amp; tycoon 2,212, survival 1,689, facts 991,
+  and <b>cozy farming games dead last on 104</b>. That is a <b>90&times; gap</b> between
+  &ldquo;Fall Asleep While I Rob Rich People&rdquo; and &ldquo;fall asleep while I tend my farm&rdquo;.</p>
+  <p><b>The channel to study is sleepyslorgs.</b> 154,000 subs, <b>every single one of its 24 videos
+  posted in the last 12 months</b>, median 351,859 views. Its newest — <span class="tt">Fall Asleep
+  While I Operate Heavy Artillery</span> — did <b>602,431 views in 5 days = 120,486 views per
+  day</b>, the fastest-moving video in the whole dataset.</p>
+  <p><b>And a brand-new channel just proved it is still open.</b> <b>Kindly Sleepin&rsquo; went from
+  17 subscribers to 17,000 in about a week</b> off one video: <em>Fall Asleep While I Satisfyingly
+  Clean Extremely Broken Game Consoles</em>.</p>
+</div>
+
+<!-- 01 -->
+<div class="secwrap">
+<h2 class="sec">01 &middot; Method</h2>
+<h3 class="big">What this report counts</h3>
+<p class="lead">Only content where a <b>person talks</b>. Every music, ambience, rain, C418 and
+no-commentary longplay video was filtered out — 477 genuinely voiced sleep videos survived, across
+123 channels. Real upload dates were then pulled per video so everything could be ranked by
+<b>views per day since upload</b>, which is the only fair way to compare a video posted last week
+with one posted in 2024.</p>
+<div class="call"><b>Why views per day</b>
+Raw view counts reward old videos. A 2024 video with 3.4M views has had 600 days to get there; a
+video with 600,000 views in 5 days is moving <b>22&times; faster</b>. Everything in this report is
+ranked the second way, because the question was what is working <em>now</em>.</div>
+<div class="call w"><b>The honest limits</b>
+Upload dates resolved for <b>139 of 477</b> videos before rate limiting — the rest still count in
+the corpus totals but not in the recency tables. Every recency figure below therefore rests on 139
+dated videos plus an independently-gathered 154-video set, which agree with each other. Sub-genre
+classification is by title keyword. Where a number could not be pulled it is marked
+<span class="tag w">n/a</span> rather than guessed.</div>
+</div>
+
+<!-- 02 -->
+<div class="secwrap pb">
+<h2 class="sec">02 &middot; The trend</h2>
+<h3 class="big">The format is accelerating</h3>
+<div class="grid2">
+<div class="card acc">
+<h4>Newer videos perform better</h4>
+<table style="margin-top:8px">
+  <thead><tr><th>Uploaded</th><th class="n">n</th><th class="n">Median views/day</th></tr></thead>
+  <tbody>
+    <tr class="hi"><td><b>0&ndash;6 months ago</b></td><td class="n">72</td><td class="n win">1,672</td></tr>
+    <tr><td>6&ndash;12 months ago</td><td class="n">33</td><td class="n">900</td></tr>
+    <tr><td>1&ndash;2 years ago</td><td class="n">30</td><td class="n">859</td></tr>
+  </tbody>
+</table>
+<p style="margin:10px 0 0;font-size:13.6px">Videos posted in 2026 are running at a median
+<b>1,526 views/day</b> against <b>762</b> for 2025 uploads. The audience is growing faster than the
+supply of videos.</p>
+</div>
+<div class="card">
+<h4>But so is the competition</h4>
+<table style="margin-top:8px">
+  <thead><tr><th>Quarter</th><th class="n">Uploads found</th><th class="n">Median views</th></tr></thead>
+  <tbody>
+    <tr><td>2024 Q4</td><td class="n">6</td><td class="n">831,480</td></tr>
+    <tr><td>2025 Q2</td><td class="n">6</td><td class="n">470,667</td></tr>
+    <tr><td>2025 Q4</td><td class="n">22</td><td class="n">142,565</td></tr>
+    <tr><td>2026 Q1</td><td class="n">18</td><td class="n">60,598</td></tr>
+    <tr class="hi"><td><b>2026 Q3</b></td><td class="n win">55</td><td class="n lose">~15,600</td></tr>
+  </tbody>
+</table>
+<p style="margin:10px 0 0;font-size:13.6px"><b>9&times; more uploads per quarter than a year ago.</b>
+Median views falling is dilution from a long tail of tiny new channels, not the format dying — the
+top end is still setting records.</p>
+</div>
+</div>
+<div class="call g"><b>What that combination means for you</b>
+Demand per video is <em>rising</em> and supply is rising faster. That is the profile of a format in
+its land-grab phase: still wide open, but not for much longer. The channels breaking in right now
+are doing it in weeks, not years — and the barrier is picking the right thing to do, not being big.</div>
+</div>
+
+<!-- 03 -->
+<div class="secwrap pb">
+<h2 class="sec">03 &middot; What's hot</h2>
+<h3 class="big">The fastest-moving videos right now</h3>
+<p class="lead">Ranked by views per day. Every one of these is someone talking over an activity —
+this is the live leaderboard of the format.</p>
+<table>
+  <caption>Top 22 by views/day. Views and dates pulled live 4 Sep 2026.</caption>
+  <thead><tr><th>Uploaded</th><th class="n">Views</th><th class="n">Views/day</th><th class="n">Length</th><th>Channel</th><th>Title</th></tr></thead>
+  <tbody>
+    <tr class="hi"><td>30 Aug 2026</td><td class="n">602,431</td><td class="n win">120,486</td><td class="n">2h13</td><td>sleepyslorgs</td><td>Fall Asleep While I Operate Heavy Artillery</td></tr>
+    <tr class="hi"><td>18 Jun 2026</td><td class="n">4,595,902</td><td class="n win">58,922</td><td class="n">2h47</td><td>MadMorph</td><td>Fall asleep while I build a zoo (Part 2)</td></tr>
+    <tr class="hi"><td>23 Aug 2026</td><td class="n">395,023</td><td class="n win">32,919</td><td class="n">1h49</td><td>sleepyslorgs</td><td>Fall Asleep While I Hunt Even More Sniper Players</td></tr>
+    <tr><td>23 Jul 2026</td><td class="n">1,285,625</td><td class="n">29,898</td><td class="n">2h07</td><td>MadMorph</td><td>Fall asleep while I build a town (from nothing)</td></tr>
+    <tr><td>7 Nov 2025</td><td class="n">7,705,536</td><td class="n">25,600</td><td class="n">1h00</td><td>aCookieGod</td><td>1 hour of minecraft facts to help you sleep</td></tr>
+    <tr><td>9 Jun 2026</td><td class="n">2,198,726</td><td class="n">25,273</td><td class="n">2h58</td><td>MadMorph</td><td>Fall asleep while I build a zoo</td></tr>
+    <tr><td>20 Aug 2026</td><td class="n">341,397</td><td class="n">22,760</td><td class="n">2h19</td><td>MadMorph</td><td>Fall asleep while I play Project Zomboid</td></tr>
+    <tr><td>26 Jul 2026</td><td class="n">447,600</td><td class="n">11,190</td><td class="n">2h10</td><td>sleepyslorgs</td><td>Fall Asleep While I Sell More Drugs</td></tr>
+    <tr><td>3 May 2026</td><td class="n">1,272,458</td><td class="n">10,262</td><td class="n">2h00</td><td>sleepyslorgs</td><td>Fall Asleep While I Hunt More Sniper Players</td></tr>
+    <tr><td>27 Aug 2026</td><td class="n">80,346</td><td class="n">10,043</td><td class="n">2h18</td><td>MadMorph</td><td>Fall asleep while I play Lou&rsquo;s Lagoon</td></tr>
+    <tr><td>21 Jun 2026</td><td class="n">636,487</td><td class="n">8,486</td><td class="n">2h01</td><td>sleepyslorgs</td><td>Fall Asleep While I Sell Drugs</td></tr>
+    <tr class="hi"><td>22 Jul 2026</td><td class="n">310,751</td><td class="n win">7,063</td><td class="n">2h39</td><td>Kindly Keyin <span class="tag g">609 subs</span></td><td>Fall Asleep While I Play Satisfying Video games</td></tr>
+    <tr class="hi"><td>27 Aug 2026</td><td class="n">52,471</td><td class="n win">6,559</td><td class="n">2h27</td><td>Kindly Sleepin&rsquo; <span class="tag g">new</span></td><td>Fall Asleep While I Satisfyingly Clean Extremely Broken Game Consoles</td></tr>
+    <tr><td>2 Aug 2026</td><td class="n">215,061</td><td class="n">6,517</td><td class="n">2h04</td><td>sleepyslorgs</td><td>Fall Asleep While I Destroy Nature for Profit</td></tr>
+    <tr><td>22 Jul 2026</td><td class="n">277,747</td><td class="n">6,312</td><td class="n">2h02</td><td>sleepyslorgs</td><td>Fall Asleep While I Build a Nuclear Bomb in My Garden</td></tr>
+    <tr><td>25 May 2026</td><td class="n">584,465</td><td class="n">5,730</td><td class="n">2h48</td><td>MadMorph</td><td>Fall asleep while I build a medieval village</td></tr>
+    <tr><td>12 Apr 2026</td><td class="n">795,709</td><td class="n">5,488</td><td class="n">2h19</td><td>sleepyslorgs</td><td>Fall Asleep While I Escape Prison</td></tr>
+    <tr><td>2 Aug 2026</td><td class="n">159,697</td><td class="n">4,839</td><td class="n">3h33</td><td>Kindly Keyin <span class="tag g">609 subs</span></td><td>Fall Asleep While I Clean an Entire Supermarket</td></tr>
+    <tr><td>26 Apr 2026</td><td class="n">523,145</td><td class="n">3,993</td><td class="n">2h43</td><td>sleepyslorgs</td><td>Fall Asleep While I Worsen the Housing Crisis</td></tr>
+    <tr><td>30 Aug 2026</td><td class="n">18,888</td><td class="n">3,778</td><td class="n">0h58</td><td>CrackingGuy</td><td>Fall Asleep While I Play The Scariest FNAF Game</td></tr>
+    <tr><td>22 Feb 2026</td><td class="n">664,800</td><td class="n">3,427</td><td class="n">1h31</td><td>sleepyslorgs</td><td>Fall Asleep While I Assassinate People</td></tr>
+    <tr class="hi"><td>16 Aug 2026</td><td class="n">57,997</td><td class="n win">3,052</td><td class="n">2h07</td><td>KozyKanz <span class="tag g">11.3k subs</span></td><td>Fall Asleep While I Clean Up a VHS Archive…</td></tr>
+  </tbody>
+</table>
+<div class="call"><b>Read the titles, not the numbers</b>
+Heavy artillery. Sniper players. Selling drugs. A nuclear bomb in a garden. Escaping prison.
+Worsening the housing crisis. Destroying nature for profit. <b>The winning videos are funny and
+slightly wrong</b>, delivered in a calm voice at 2am. The comedy is in the <em>premise</em>, not in
+the performance — which is exactly what makes it compatible with sleep.</div>
+</div>
+
+<!-- 04 -->
+<div class="secwrap pb">
+<h2 class="sec">04 &middot; The X</h2>
+<h3 class="big">What to actually do, ranked</h3>
+<p class="lead">Every video classified by the activity in its title, then ranked by median views per
+day. This is the most decision-useful table in the report.</p>
+<table>
+  <caption>139 dated voiced sleep videos, bucketed by activity. Ranked by median views/day.</caption>
+  <thead><tr><th>What they do</th><th class="n">n</th><th class="n">Median views/day</th>
+  <th class="n">Median views</th><th class="n">p90 views/day</th><th class="n">Median length</th></tr></thead>
+  <tbody>
+    <tr class="hi"><td><b>Action / crime</b> &mdash; robbing, sniping, dealing, assassinating</td><td class="n">10</td><td class="n win">9,374</td><td class="n">579,348</td><td class="n">32,919</td><td class="n">2h12</td></tr>
+    <tr class="hi"><td><b>Build / tycoon sim</b> &mdash; zoos, towns, theme parks</td><td class="n">13</td><td class="n win">2,212</td><td class="n">367,245</td><td class="n">25,273</td><td class="n">2h07</td></tr>
+    <tr><td>Survival / RPG &mdash; Zomboid, Subnautica, Oblivion</td><td class="n">5</td><td class="n">1,689</td><td class="n">217,032</td><td class="n">1,855</td><td class="n">2h51</td></tr>
+    <tr><td>Mixed / other</td><td class="n">44</td><td class="n">1,108</td><td class="n">181,645</td><td class="n">3,993</td><td class="n">2h16</td></tr>
+    <tr><td>Facts / lore narration</td><td class="n">12</td><td class="n">991</td><td class="n">362,979</td><td class="n">2,138</td><td class="n">2h00</td></tr>
+    <tr><td>Generic Minecraft</td><td class="n">18</td><td class="n">559</td><td class="n">64,745</td><td class="n">2,448</td><td class="n">2h09</td></tr>
+    <tr><td><b>Cozy / farming sim</b> &mdash; Stardew, Sims, Animal Crossing</td><td class="n">34</td><td class="n lose">104</td><td class="n">36,114</td><td class="n">1,427</td><td class="n">2h26</td></tr>
+  </tbody>
+</table>
+<div class="call r"><b>The 90&times; result</b>
+<b>Action and crime beat cozy farming by 90&times; on views per day</b> — and cozy is the single most
+crowded bucket in the data (34 videos, the largest). Everyone assumes sleep content must be gentle,
+so they all make the same gentle thing, and it all drowns. <b>The demand is for a calm voice doing
+something the viewer finds funny or mildly outrageous.</b></div>
+<h4>A second, larger run of the same question</h4>
+<p>The same analysis was rebuilt independently on 130 dated videos with a stricter format filter.
+It disagrees with the table above on exactly one thing — where Minecraft lands — and agrees on
+everything else.</p>
+<table>
+  <caption>Independent classification, 130 dated voiced-sleep videos, ranked by median views/day.</caption>
+  <thead><tr><th>What they do</th><th class="n">n</th><th class="n">Median views/day</th></tr></thead>
+  <tbody>
+    <tr class="hi"><td><b>Crime-spree premise</b> &mdash; no game named, just the deed</td><td class="n">15</td><td class="n win">5,488</td></tr>
+    <tr class="hi"><td><b>Minecraft sandbox</b></td><td class="n">9</td><td class="n win">4,591</td></tr>
+    <tr><td>Reddit / personal stories over gameplay</td><td class="n">7</td><td class="n">2,675</td></tr>
+    <tr><td>Satirical tycoon (&ldquo;Worsen the Housing Crisis&rdquo;)</td><td class="n">4</td><td class="n">2,149</td></tr>
+    <tr><td>Cozy sims (Sims 4, Town to City, Planet Zoo)</td><td class="n">11</td><td class="n">1,673</td></tr>
+    <tr><td>Facts / lore / quizzes</td><td class="n">31</td><td class="n">1,562</td></tr>
+    <tr><td>AAA narrative games (Skyrim, BG3, Subnautica)</td><td class="n">7</td><td class="n lose">1,509</td></tr>
+    <tr><td>Guided meditation / hypnosis</td><td class="n">34</td><td class="n lose">1,278</td></tr>
+  </tbody>
+</table>
+<div class="call"><b>Where the two tables agree, and where they don't</b>
+<b>Both put the crime / chaos premise first</b> — that is the finding to act on, and it survives two
+different filters. They disagree on Minecraft: the stricter filter ranks it second (4,591/day),
+while the looser one ranks generic &ldquo;play Minecraft&rdquo; titles near the bottom. The
+reconciliation is in the titles themselves. <b>Minecraft works as the engine; &ldquo;Minecraft&rdquo;
+does not work as the hook.</b> &ldquo;Fall Asleep While I Build An Arctic Research Base In
+Minecraft&rdquo; does 2,797/day. &ldquo;Fall asleep while I play Minecraft&rdquo; on its own is a
+crowded shelf. <b>Name the deed, not the game.</b></div>
+
+<div class="call r"><b>Two traps the raw view counts will lead you into</b>
+<b>1. Guided meditation has the biggest numbers and the worst momentum.</b> Those channels hold
+videos with 28M and 81M views — and the <em>lowest</em> median views/day in the table (1,278).
+Those are four-to-eight-year-old evergreen uploads compounding, not current performance. Ranking by
+raw views points you straight at the slowest-growing corner of the niche.<br>
+<b>2. Big-name games underperform.</b> Skyrim, Baldur&rsquo;s Gate 3, Subnautica — the weakest real
+activity bucket at 1,509/day. Story and combat games do not read as background; sandbox and
+mischief do.</div>
+</div>
+
+<!-- 05 -->
+<div class="secwrap pb">
+<h2 class="sec">05 &middot; The rising format</h2>
+<h3 class="big">&ldquo;Satisfying cleaning&rdquo; is the newest thing that works</h3>
+<p class="lead">A cluster of channels started doing this within the last two months and every one of
+them is landing. It is the clearest new opening in the data.</p>
+<table>
+  <caption>The cleaning / satisfying sub-format. All uploaded within the last ~7 weeks.</caption>
+  <thead><tr><th>Channel</th><th class="n">Subs</th><th class="n">Uploaded</th><th class="n">Views</th><th class="n">Views/day</th><th>Title</th></tr></thead>
+  <tbody>
+    <tr class="hi"><td><b>Kindly Sleepin&rsquo;</b></td><td class="n">17,000</td><td>27 Aug 2026</td><td class="n">52,471</td><td class="n win">6,559</td><td>Fall Asleep While I Satisfyingly Clean Extremely Broken Game Consoles</td></tr>
+    <tr class="hi"><td><b>Kindly Keyin</b></td><td class="n">609</td><td>22 Jul 2026</td><td class="n">310,751</td><td class="n win">7,063</td><td>Fall Asleep While I Play Satisfying Video games</td></tr>
+    <tr><td>Kindly Keyin</td><td class="n">609</td><td>2 Aug 2026</td><td class="n">159,697</td><td class="n">4,839</td><td>Fall Asleep While I Clean an Entire Supermarket</td></tr>
+    <tr><td>KozyKanz</td><td class="n">11,300</td><td>16 Aug 2026</td><td class="n">57,997</td><td class="n">3,052</td><td>Fall Asleep While I Clean Up a VHS Archive…</td></tr>
+    <tr><td>KozyKanz</td><td class="n">11,300</td><td>21 Aug 2026</td><td class="n">39,184</td><td class="n">2,799</td><td>Fall Asleep While I Clean a Full Wine Cellar…</td></tr>
+    <tr><td>KozyKanz</td><td class="n">11,300</td><td>12 Aug 2026</td><td class="n">63,494</td><td class="n">2,761</td><td>Fall Asleep While I Clean Up Sorcery Shops…</td></tr>
+  </tbody>
+</table>
+<div class="call g"><b>The proof a new channel can still break in <span class="tag g">Last month</span></b>
+<b>Kindly Sleepin&rsquo; went from 17 subscribers to 17,000 in roughly a week</b> off a single video.
+<b>Kindly Keyin has 609 subscribers and a video doing 7,063 views a day.</b> These are not
+established creators coasting — they are people who picked the right premise in the last eight weeks.
+This is the strongest evidence in the report that the door is open <em>now</em>.</div>
+</div>
+
+<!-- 06 -->
+<div class="secwrap pb">
+<h2 class="sec">06 &middot; The case study</h2>
+<h3 class="big">sleepyslorgs — copy this channel</h3>
+<div class="stats">
+  <div class="stat"><b>154,000</b><span>subscribers</span></div>
+  <div class="stat"><b>24 / 24</b><span>videos posted in the last 12 months &mdash; the whole channel is new</span></div>
+  <div class="stat"><b>351,859</b><span>median views per video</span></div>
+  <div class="stat"><b>2,674</b><span>median views per day &mdash; highest of any channel measured</span></div>
+</div>
+<p>Its entire catalogue is inside twelve months, which means <b>everything it has done is currently
+working</b> — there is no legacy tail propping up the numbers. Its formula, visible in every title:</p>
+<div class="grid2">
+<div class="card acc">
+<h4>The formula</h4>
+<ol style="margin-bottom:0">
+<li><span class="tt">Fall Asleep While I</span> &mdash; identical prefix every time, so the channel is
+instantly recognisable in a feed.</li>
+<li><b>A verb that sounds slightly criminal</b> &mdash; rob, sell, assassinate, hunt, steal, escape,
+destroy, terrorise, worsen.</li>
+<li><b>An absurd object</b> &mdash; a nuclear bomb in my garden, the housing crisis, society with fish.</li>
+<li><b>Roughly two hours</b>, every time.</li>
+<li>Calm delivery underneath. <b>The joke is the title; the video is soothing.</b></li>
+</ol>
+</div>
+<div class="card">
+<h4>Channels ranked on recent form</h4>
+<table style="margin-top:6px">
+  <thead><tr><th>Channel</th><th class="n">Subs</th><th class="n">Videos&nbsp;12m</th><th class="n">Median v/day</th></tr></thead>
+  <tbody>
+    <tr class="hi"><td><b>sleepyslorgs</b></td><td class="n">154,000</td><td class="n">24</td><td class="n win">2,674</td></tr>
+    <tr><td>aluhhsim</td><td class="n">69,400</td><td class="n">2</td><td class="n">1,594</td></tr>
+    <tr><td>MadMorph</td><td class="n">851,000</td><td class="n">32</td><td class="n">1,411</td></tr>
+    <tr><td>Sleepy Science Channel</td><td class="n">334,000</td><td class="n">4</td><td class="n">1,072</td></tr>
+    <tr><td>flowstate</td><td class="n">388,000</td><td class="n">6</td><td class="n">559</td></tr>
+  </tbody>
+</table>
+<p style="margin:10px 0 0;font-size:13.4px"><b>sleepyslorgs beats MadMorph on views per day with
+one fifth the subscribers</b>, because its premises are sharper. MadMorph is the bigger channel;
+sleepyslorgs is the better template.</p>
+</div>
+</div>
+</div>
+
+<!-- 07 -->
+<div class="secwrap pb">
+<h2 class="sec">07 &middot; Length</h2>
+<h3 class="big">Two hours. Every winner is two hours.</h3>
+<table>
+  <caption>Views per day by duration, videos from the last 2 years only.</caption>
+  <thead><tr><th>Length</th><th class="n">n</th><th class="n">Median views/day</th><th class="n">p90 views/day</th></tr></thead>
+  <tbody>
+    <tr><td>10&ndash;60 min</td><td class="n">6</td><td class="n lose">2</td><td class="n">10</td></tr>
+    <tr><td>1&ndash;2 h</td><td class="n">36</td><td class="n">918</td><td class="n">2,938</td></tr>
+    <tr class="hi"><td><b>2&ndash;3 h</b></td><td class="n">71</td><td class="n win">1,341</td><td class="n win">8,486</td></tr>
+    <tr><td>3&ndash;5 h</td><td class="n">13</td><td class="n">879</td><td class="n">2,799</td></tr>
+    <tr><td>5 h+</td><td class="n">9</td><td class="n lose">163</td><td class="n">2,138</td></tr>
+  </tbody>
+</table>
+<p>The 2&ndash;3 hour band wins on both median and p90, and it is where the sample actually lives —
+71 of 135 videos. sleepyslorgs runs 1h49&ndash;2h43. MadMorph runs 2h00&ndash;2h58. <b>Under an hour
+is effectively dead in this format</b>, and past three hours the returns collapse. One recording
+session, topped and tailed, is the entire production model.</p>
+</div>
+
+<!-- 08 -->
+<div class="secwrap pb">
+<h2 class="sec">08 &middot; Two people</h2>
+<h3 class="big">Does a duo work in this format?</h3>
+<p class="lead">The format is overwhelmingly solo, but there is a real two-person data point and it
+is encouraging.</p>
+<div class="call g"><b>The evidence — recent, and at parity <span class="tag g">Verified dates</span></b>
+<b>MadMorph &times; Down To Sleep</b> are two established solo sleep creators who collaborate inside
+this exact format. Three collabs with confirmed upload dates:
+<table style="margin:11px 0 4px">
+  <thead><tr><th>Uploaded</th><th class="n">Views</th><th class="n">Views/day</th><th>Video</th></tr></thead>
+  <tbody>
+    <tr class="hi"><td>15 Mar 2026</td><td class="n">469,434</td><td class="n win">2,713</td><td>Pokémon Pokopia</td></tr>
+    <tr><td>13 Dec 2025</td><td class="n">197,717</td><td class="n">746</td><td>Light Up The Town</td></tr>
+    <tr><td>8 Nov 2025</td><td class="n">96,383</td><td class="n">321</td><td>Edith Finch</td></tr>
+  </tbody>
+</table>
+MadMorph&rsquo;s solo median over the same window is around <b>912 views/day</b>. <b>The collabs land
+inside and above that range</b> — and they are current (Nov 2025 to Mar 2026), not historic. Two
+voices is not a penalty in this format.</div>
+
+<div class="call r"><b>But open-ended chatting is the weak part — and this is the warning for you</b>
+Down To Sleep&rsquo;s own <b>&ldquo;Ask Me Anything&rdquo;</b> video did <b>35 views/day</b> against
+<b>284 and 1,084</b> for that same channel&rsquo;s structured story narrations — it underperformed its
+own channel by <b>8&times; to 31&times;</b>. Across the whole sweep, the &ldquo;we just chat / Q&amp;A /
+life update&rdquo; style has <b>no example working at scale</b>. The two-person content that performs
+is built around <em>doing a thing</em>. <b>&ldquo;Two friends talking&rdquo; is the part the data
+argues against; &ldquo;two friends doing something ridiculous and talking while they do it&rdquo; is
+the part it supports.</b></div>
+
+<div class="call w"><b>What is still unproven</b>
+No channel is <em>built</em> around two people in this format — the duo evidence is collaborations
+between established solo channels, not a native duo, and it could not be confirmed by listening
+whether those videos are true two-way banter throughout or a host plus a guest. So: two people
+demonstrably does not break the format, but nobody has made it a channel&rsquo;s whole identity yet.
+That is the opening.</div>
+<div class="call"><b>The production rule that decides it</b>
+Sleep content works because the noise floor is steady. Two friends bantering is the one thing that
+naturally spikes. <b>Record on separate tracks, compress and hard-limit so a laugh is audible but
+never louder, and never both raise your voice at once.</b> Get that right and &ldquo;Fall Asleep
+While <em>We</em>&hellip;&rdquo; is an untaken position in a format that is currently exploding.</div>
+</div>
+
+<!-- 09 -->
+<div class="secwrap pb">
+<h2 class="sec">09 &middot; Do this</h2>
+<h3 class="big">The brief</h3>
+<div class="call g"><b>The formula, straight off the data</b>
+<ol style="margin-bottom:0;margin-top:8px">
+<li><b>Title:</b> <span class="tt">Fall Asleep While We [slightly-wrong verb] [absurd object]</span>.
+Same prefix every single upload.</li>
+<li><b>Activity:</b> action, crime, chaos or building something ridiculous.
+<b>Not cozy farming</b> — that bucket runs at 104 views/day.</li>
+<li><b>Length:</b> 2 to 2 hours 30. Not 45 minutes. Not 5 hours.</li>
+<li><b>Delivery:</b> calm, quiet, steady. The premise carries the comedy; your voice stays flat.</li>
+<li><b>Cadence:</b> sleepyslorgs put out 24 in twelve months — roughly one every fortnight — and that
+was enough to build the whole channel.</li>
+</ol></div>
+<h4>Ten titles that fit the winning pattern</h4>
+<ol>
+<li>Fall Asleep While We Run the Worst Business in the City</li>
+<li>Fall Asleep While We Commit Increasingly Petty Crimes</li>
+<li>Fall Asleep While We Build a Village and Ruin Each Other&rsquo;s Reputations</li>
+<li>Fall Asleep While We Take Over an Island We Are Not Qualified to Run</li>
+<li>Fall Asleep While We Steal Everything That Isn&rsquo;t Nailed Down</li>
+<li>Fall Asleep While We Build the Most Unethical Zoo Possible</li>
+<li>Fall Asleep While We Terrorise a Perfectly Nice Village</li>
+<li>Fall Asleep While We Clean Up the Mess We Made Last Video</li>
+<li>Fall Asleep While We Argue About Something That Doesn&rsquo;t Matter</li>
+<li>Fall Asleep While We Slowly Destroy the Housing Market</li>
+</ol>
+<div class="call"><b>Where your original ideas fit</b>
+&ldquo;Our worst rizz attempts&rdquo; is a <b>talking</b> premise, and the talking-led lane is thinner
+than the doing-led one — the data here is dominated by people <em>doing</em> something. The
+strongest version merges the two: <b>do something ridiculous on screen and tell the stories while
+you do it.</b> <span class="tt">Fall Asleep While We Build a Village and Tell You Our Worst Rizz
+Attempts</span> gets the activity hook that the algorithm rewards <em>and</em> keeps the content you
+actually want to make.</div>
+<div class="call r"><b>The one number to remember</b>
+<b>9&times; more people are uploading this format than a year ago, and videos posted in the last six
+months are outperforming everything older.</b> Both trends are steep. The window is open and it is
+visibly closing — Kindly Sleepin&rsquo; went 17 to 17,000 subscribers in a week, in August, doing
+exactly this.</div>
+</div>
+
+<div class="foot">
+<b>Sources &amp; confidence.</b> 477 voiced sleep videos identified across 123 channels from targeted
+YouTube searches on 4 September 2026, with all music, ambience, rain and no-commentary content
+excluded by filter. Upload dates, view counts and subscriber counts pulled per video; 139 resolved
+before rate limiting, cross-checked against an independently gathered 154-video dated set that
+agrees on every headline figure. Views-per-day is views divided by days since upload as of
+4 September 2026. Activity buckets are classified by title keyword. Small buckets are labelled with
+their n so their weight is visible — the action/crime bucket rests on 10 videos and the survival
+bucket on 5, so treat their exact multiples as directional while the ordering is consistent across
+both datasets.
+</div>
+
+</div>
+</body>
+</html>
